@@ -1,52 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TaskFlow - Task Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern, responsive task management application built with Laravel 10, featuring user authentication, real-time collaboration, and a beautiful dark/light theme interface.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Core Functionality
+- ✅ **Complete Task Management**: Create, edit, delete, and track tasks
+- ✅ **User Authentication**: Secure login/registration with Laravel Breeze
+- ✅ **Task Organization**: Group tasks by subjects and priorities
+- ✅ **Status Tracking**: Pending, In Progress, Completed states
+- ✅ **Task Comments**: Add comments to tasks for collaboration
+- ✅ **Search & Filtering**: Find tasks by status, subject, or keywords
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### User Experience
+- ✅ **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- ✅ **Dark/Light Theme**: Toggle between themes with persistent preference
+- ✅ **Modern UI**: Clean, consistent design with custom CSS variables
+- ✅ **Flash Messages**: Real-time feedback for user actions
+- ✅ **Email Integration**: Password reset emails via Gmail SMTP
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Technical Features
+- ✅ **Laravel 10**: Latest framework with modern PHP features
+- ✅ **Database Design**: 5-table relational structure (users, tasks, subjects, priorities, comments)
+- ✅ **Form Validation**: Comprehensive client and server-side validation
+- ✅ **Authorization**: Users can only access their own data
+- ✅ **Error Handling**: Try-catch blocks with user-friendly messages
 
-## Learning Laravel
+## 🛠️ Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- **Backend**: Laravel 10, PHP 8.1+
+- **Database**: SQLite (development), MySQL/PostgreSQL (production)
+- **Frontend**: Blade templates, Tailwind CSS, Custom CSS
+- **Authentication**: Laravel Breeze
+- **Email**: Gmail SMTP
+- **Version Control**: Git + GitHub
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📋 Prerequisites
 
-## Laravel Sponsors
+- PHP 8.1 or higher
+- Composer
+- Node.js & npm
+- Git
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 Installation
 
-### Premium Partners
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/taskflow.git
+   cd taskflow
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. **Install PHP dependencies**
+   ```bash
+   composer install
+   ```
 
-## Contributing
+3. **Install Node dependencies**
+   ```bash
+   npm install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Environment setup**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Code of Conduct
+5. **Database setup**
+   ```bash
+   php artisan migrate
+   php artisan db:seed  # Optional: adds sample priorities
+   ```
+
+6. **Build assets**
+   ```bash
+   npm run build
+   ```
+
+7. **Start the server**
+   ```bash
+   php artisan serve
+   ```
+
+8. **Access the application**
+   - Visit: http://localhost:8000
+   - Register a new account or login
+
+## 👥 Team Collaboration
+
+This project follows a structured collaboration workflow:
+
+### Branching Strategy
+- `main` - Production-ready code
+- `develop` - Integration branch for features
+- `feature/*` - Individual feature branches
+- `bugfix/*` - Bug fix branches
+
+### Development Workflow
+1. **Create feature branch**: `git checkout -b feature/your-feature-name`
+2. **Make changes**: Implement your assigned task
+3. **Test thoroughly**: Ensure functionality works
+4. **Commit changes**: `git commit -m "Add: descriptive commit message"`
+5. **Push branch**: `git push origin feature/your-feature-name`
+6. **Create Pull Request**: Request code review
+7. **Merge after approval**: Team lead merges to develop/main
+
+### Task Assignment
+
+#### Frontend Team
+- [ ] Improve mobile responsiveness
+- [ ] Add loading animations
+- [ ] Implement drag-and-drop task reordering
+- [ ] Add task templates
+- [ ] Create dashboard widgets
+
+#### Backend Team
+- [ ] Add task file attachments
+- [ ] Implement task sharing between users
+- [ ] Add email notifications for due dates
+- [ ] Create API endpoints for mobile app
+- [ ] Add task time tracking
+
+#### QA Team
+- [ ] Write comprehensive test cases
+- [ ] Perform cross-browser testing
+- [ ] Test email functionality
+- [ ] Validate responsive design
+- [ ] Security testing
+
+#### DevOps Team
+- [ ] Set up CI/CD pipeline
+- [ ] Configure production deployment
+- [ ] Database optimization
+- [ ] Performance monitoring
+- [ ] Backup strategies
+
+## 📝 Contributing
+
+1. **Fork the repository**
+2. **Create your feature branch** (`git checkout -b feature/amazing-feature`)
+3. **Commit your changes** (`git commit -m 'Add some amazing feature'`)
+4. **Push to the branch** (`git push origin feature/amazing-feature`)
+5. **Open a Pull Request**
+
+### Code Review Process
+- All PRs require at least 1 approval
+- Code must pass automated tests
+- Follow PSR-12 coding standards
+- Include proper documentation
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Team
+
+- **Project Lead**: [Your Name]
+- **Frontend**: [Team Member 1]
+- **Backend**: [Team Member 2]
+- **QA**: [Team Member 3]
+- **DevOps**: [Team Member 4]
+
+## 📞 Support
+
+For questions or issues:
+- Create an issue on GitHub
+- Contact the team lead
+- Check the documentation
+
+---
+
+**Happy task managing with TaskFlow! 🎯**
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
