@@ -68,7 +68,7 @@
             <label class="form-label" style="margin-bottom:6px;">Priority</label>
             <select name="priority_id" class="form-input">
                 <option value="">No Priority</option>
-                @foreach(\App\Models\Priority::where('user_id', Auth::id())->get() as $priority)
+                @foreach(\App\Models\Priority::orderBy('level')->get() as $priority)
                     <option value="{{ $priority->id }}">{{ $priority->name }}</option>
                 @endforeach
             </select>

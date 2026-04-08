@@ -380,6 +380,172 @@
             background: rgba(124,106,247,0.1);
             border-color: var(--c-accent);
         }
+
+        /* Additional Themes */
+        [data-theme="opera"] {
+            --c-bg: #1a1a1a;
+            --c-surface: #2a2a2a;
+            --c-border: #404040;
+            --c-accent: #ff1b5a;
+            --c-accent-light: #ff6b8a;
+            --c-text: #ffffff;
+            --c-muted: #cccccc;
+            --c-success: #00ff88;
+            --c-danger: #ff4757;
+            --c-warning: #ffa500;
+        }
+
+        [data-theme="forest"] {
+            --c-bg: #0a1f0a;
+            --c-surface: #1a3a1a;
+            --c-border: #2a5a2a;
+            --c-accent: #4ade80;
+            --c-accent-light: #6ee7a0;
+            --c-text: #e8f5e8;
+            --c-muted: #a8d5a8;
+            --c-success: #22c55e;
+            --c-danger: #ef4444;
+            --c-warning: #f59e0b;
+        }
+
+        [data-theme="ocean"] {
+            --c-bg: #0a1929;
+            --c-surface: #1a365d;
+            --c-border: #2a4a7a;
+            --c-accent: #06b6d4;
+            --c-accent-light: #22d3ee;
+            --c-text: #e0f2fe;
+            --c-muted: #a8d5f0;
+            --c-success: #10b981;
+            --c-danger: #ef4444;
+            --c-warning: #f59e0b;
+        }
+
+        [data-theme="sunset"] {
+            --c-bg: #2d1b69;
+            --c-surface: #4c2a85;
+            --c-border: #6b46c1;
+            --c-accent: #f97316;
+            --c-accent-light: #fb923c;
+            --c-text: #fef3c7;
+            --c-muted: #d4b5f0;
+            --c-success: #22c55e;
+            --c-danger: #ef4444;
+            --c-warning: #eab308;
+        }
+
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-container.open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .chatbot-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--c-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-light) 100%);
+            border-radius: 16px 16px 0 0;
+            color: white;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .message.bot {
+            background: var(--c-accent);
+            color: white;
+            align-self: flex-start;
+        }
+
+        .message.user {
+            background: var(--c-bg);
+            color: var(--c-text);
+            border: 1px solid var(--c-border);
+            align-self: flex-end;
+        }
+
+        .chatbot-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--c-border);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chatbot-input {
+            flex: 1;
+            background: var(--c-bg);
+            border: 1px solid var(--c-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--c-text);
+            font-size: 0.875rem;
+            outline: none;
+        }
+
+        .chatbot-input:focus {
+            border-color: var(--c-accent);
+        }
+
+        .chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--c-accent);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.05);
+            background: var(--c-accent-light);
+        }
+
+        .chatbot-container.open + .chatbot-toggle {
+            display: none;
+        }
     </style>
 
     <script>
@@ -387,18 +553,25 @@
         (function() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeSelector').value = savedTheme;
         })();
 
-        // Toggle theme function
+        // Change theme function
+        function changeTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateThemeIcon();
+        }
+
+        // Toggle theme function (legacy support)
         function toggleTheme() {
             const html = document.documentElement;
             const currentTheme = html.getAttribute('data-theme') || 'dark';
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
+
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-            
-            // Update button icon
+            document.getElementById('themeSelector').value = newTheme;
             updateThemeIcon();
         }
 
@@ -406,7 +579,7 @@
         function updateThemeIcon() {
             const btn = document.getElementById('themeToggleBtn');
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-            
+
             if (currentTheme === 'dark') {
                 btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
                 btn.title = 'Switch to Light Mode';
@@ -418,6 +591,85 @@
 
         // Set initial icon
         document.addEventListener('DOMContentLoaded', updateThemeIcon);
+
+        // Chatbot functionality
+        let chatbotMessages = [];
+        const motivationalMessages = [
+            "Hey there! Ready to tackle some tasks today? 💪",
+            "I see you have some tasks waiting. Let's get them done!",
+            "Remember: Every completed task brings you closer to your goals! 🎯",
+            "You've got this! One task at a time. 🚀",
+            "Procrastination is the thief of time. Let's beat it together! ⚡",
+            "Small steps lead to big achievements. What's one task you can complete now?",
+            "Your future self will thank you for getting things done today! 🙏",
+            "Action creates motivation. Let's start with something small! 🌟",
+            "Every expert was once a beginner. Keep pushing forward! 📈",
+            "The best time to start was yesterday. The second best time is now! ⏰"
+        ];
+
+        function initChatbot() {
+            const container = document.querySelector('.chatbot-container');
+            const toggle = document.querySelector('.chatbot-toggle');
+            const input = document.querySelector('.chatbot-input');
+            const messages = document.querySelector('.chatbot-messages');
+
+            toggle.addEventListener('click', () => {
+                container.classList.add('open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!container.contains(e.target) && !toggle.contains(e.target)) {
+                    container.classList.remove('open');
+                }
+            });
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage(input.value);
+                    input.value = '';
+                }
+            });
+
+            // Add initial greeting
+            setTimeout(() => {
+                addMessage(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)], 'bot');
+            }, 1000);
+        }
+
+        function addMessage(text, sender) {
+            const messages = document.querySelector('.chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function sendMessage(text) {
+            if (!text.trim()) return;
+
+            addMessage(text, 'user');
+
+            // Simple bot responses
+            setTimeout(() => {
+                const responses = [
+                    "That's a great goal! Let's break it down into smaller steps. 📝",
+                    "I believe in you! You've got the skills to make this happen. 🌟",
+                    "Accountability is key! Set a timer and get started. ⏱️",
+                    "Remember why you started. Your motivation is within you! 🔥",
+                    "Progress over perfection. Take that first step now! 👣",
+                    "You're capable of amazing things. Start small, dream big! 💫",
+                    "Every journey begins with a single step. What's yours? 🚶",
+                    "Success is built on consistent action. Let's build yours! 🏗️"
+                ];
+
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addMessage(randomResponse, 'bot');
+            }, 500 + Math.random() * 1000);
+        }
+
+        // Initialize chatbot when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initChatbot);
     </script>
 </head>
 <body>
@@ -484,6 +736,14 @@
             <h1 class="font-display" style="font-size:1.1rem; font-weight:700; margin:0;">@yield('title', 'Dashboard')</h1>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
+            <select id="themeSelector" class="form-input" style="width:auto; padding:6px 10px; font-size:0.8rem;" onchange="changeTheme(this.value)">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="opera">Opera</option>
+                <option value="forest">Forest</option>
+                <option value="ocean">Ocean</option>
+                <option value="sunset">Sunset</option>
+            </select>
             <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()"></button>
             <a href="{{ route('tasks.create') }}" class="btn btn-primary btn-sm">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -497,6 +757,23 @@
         @yield('content')
     </div>
 </div>
+
+<!-- Chatbot -->
+<div class="chatbot-container">
+    <div class="chatbot-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.2rem;">🤖</span>
+            <span style="font-weight:600;">Task Buddy</span>
+        </div>
+        <button onclick="document.querySelector('.chatbot-container').classList.remove('open')" style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">×</button>
+    </div>
+    <div class="chatbot-messages"></div>
+    <div class="chatbot-input-area">
+        <input type="text" class="chatbot-input" placeholder="Tell me about your goals...">
+    </div>
+</div>
+
+<button class="chatbot-toggle" title="Chat with Task Buddy">💬</button>
 
 </body>
 </html>
