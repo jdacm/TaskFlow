@@ -433,118 +433,6 @@
             --c-danger: #ef4444;
             --c-warning: #eab308;
         }
-
-        /* Chatbot Styles */
-        .chatbot-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
-            height: 500px;
-            background: var(--c-surface);
-            border: 1px solid var(--c-border);
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-
-        .chatbot-container.open {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .chatbot-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--c-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-light) 100%);
-            border-radius: 16px 16px 0 0;
-            color: white;
-        }
-
-        .chatbot-messages {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.875rem;
-            line-height: 1.4;
-        }
-
-        .message.bot {
-            background: var(--c-accent);
-            color: white;
-            align-self: flex-start;
-        }
-
-        .message.user {
-            background: var(--c-bg);
-            color: var(--c-text);
-            border: 1px solid var(--c-border);
-            align-self: flex-end;
-        }
-
-        .chatbot-input-area {
-            padding: 16px 20px;
-            border-top: 1px solid var(--c-border);
-            display: flex;
-            gap: 8px;
-        }
-
-        .chatbot-input {
-            flex: 1;
-            background: var(--c-bg);
-            border: 1px solid var(--c-border);
-            border-radius: 8px;
-            padding: 8px 12px;
-            color: var(--c-text);
-            font-size: 0.875rem;
-            outline: none;
-        }
-
-        .chatbot-input:focus {
-            border-color: var(--c-accent);
-        }
-
-        .chatbot-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: var(--c-accent);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 1001;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chatbot-toggle:hover {
-            transform: scale(1.05);
-            background: var(--c-accent-light);
-        }
     </style>
 
     <script>
@@ -590,103 +478,6 @@
 
         // Set initial icon
         document.addEventListener('DOMContentLoaded', updateThemeIcon);
-
-        // Chatbot functionality
-        let chatbotMessages = [];
-        const motivationalMessages = [
-            "Hey there! Ready to tackle some tasks today? 💪",
-            "I see you have some tasks waiting. Let's get them done!",
-            "Remember: Every completed task brings you closer to your goals! 🎯",
-            "You've got this! One task at a time. 🚀",
-            "Procrastination is the thief of time. Let's beat it together! ⚡",
-            "Small steps lead to big achievements. What's one task you can complete now?",
-            "Your future self will thank you for getting things done today! 🙏",
-            "Action creates motivation. Let's start with something small! 🌟",
-            "Every expert was once a beginner. Keep pushing forward! 📈",
-            "The best time to start was yesterday. The second best time is now! ⏰"
-        ];
-
-        function initChatbot() {
-            const container = document.querySelector('.chatbot-container');
-            const toggle = document.querySelector('.chatbot-toggle');
-            const input = document.querySelector('.chatbot-input');
-            const messages = document.querySelector('.chatbot-messages');
-
-            if (!container || !toggle || !input || !messages) {
-                console.error('Chatbot elements not found');
-                return;
-            }
-
-            toggle.addEventListener('click', () => {
-                container.classList.add('open');
-                toggle.style.display = 'none';
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!container.contains(e.target) && !toggle.contains(e.target)) {
-                    container.classList.remove('open');
-                    toggle.style.display = 'flex';
-                }
-            });
-
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    sendMessage(input.value, input);
-                    input.value = '';
-                }
-            });
-
-            // Add initial greeting
-            setTimeout(() => {
-                addMessage(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)], 'bot');
-            }, 1000);
-        }
-
-        function addMessage(text, sender) {
-            const messages = document.querySelector('.chatbot-messages');
-            if (!messages) {
-                console.error('Messages container not found');
-                return;
-            }
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}`;
-            messageDiv.textContent = text;
-            messages.appendChild(messageDiv);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function sendMessage(text, inputElement) {
-            if (!text.trim()) return;
-
-            addMessage(text, 'user');
-
-            // Simple bot responses
-            setTimeout(() => {
-                const responses = [
-                    "That's a great goal! Let's break it down into smaller steps. 📝",
-                    "I believe in you! You've got the skills to make this happen. 🌟",
-                    "Accountability is key! Set a timer and get started. ⏱️",
-                    "Remember why you started. Your motivation is within you! 🔥",
-                    "Progress over perfection. Take that first step now! 👣",
-                    "You're capable of amazing things. Start small, dream big! 💫",
-                    "Every journey begins with a single step. What's yours? 🚶",
-                    "Success is built on consistent action. Let's build yours! 🏗️"
-                ];
-
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                addMessage(randomResponse, 'bot');
-            }, 500 + Math.random() * 1000);
-        }
-
-        // Initialize chatbot when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Initializing chatbot...');
-            setTimeout(() => {
-                initChatbot();
-                console.log('Chatbot initialized');
-            }, 100);
-        });
     </script>
 </head>
 <body>
@@ -752,6 +543,34 @@
             </button>
             <h1 class="font-display" style="font-size:1.1rem; font-weight:700; margin:0;">@yield('title', 'Dashboard')</h1>
         </div>
+
+        {{-- Daily Motivational Quote --}}
+        <div class="motivational-quote" style="flex:1; text-align:center; max-width:400px; margin:0 20px;">
+            <p style="margin:0; font-size:0.9rem; color:var(--c-muted); font-style:italic; line-height:1.4;">
+                @php
+                    $quotes = [
+                        "The only way to do great work is to love what you do. – Steve Jobs",
+                        "Believe you can and you're halfway there. – Theodore Roosevelt",
+                        "The future belongs to those who believe in the beauty of their dreams. – Eleanor Roosevelt",
+                        "You miss 100% of the shots you don't take. – Wayne Gretzky",
+                        "The best way to predict the future is to create it. – Peter Drucker",
+                        "Don't watch the clock; do what it does. Keep going. – Sam Levenson",
+                        "The only limit to our realization of tomorrow will be our doubts of today. – Franklin D. Roosevelt",
+                        "Success is not final, failure is not fatal: It is the courage to continue that counts. – Winston Churchill",
+                        "Your time is limited, so don't waste it living someone else's life. – Steve Jobs",
+                        "The way to get started is to quit talking and begin doing. – Walt Disney",
+                        "Keep your face always toward the sunshine—and shadows will fall behind you. – Walt Whitman",
+                        "The secret of getting ahead is getting started. – Mark Twain",
+                        "What lies behind us and what lies before us are tiny matters compared to what lies within us. – Ralph Waldo Emerson",
+                        "You can't build a reputation on what you are going to do. – Henry Ford",
+                        "The only person you are destined to become is the person you decide to be. – Ralph Waldo Emerson"
+                    ];
+                    $dailyQuote = $quotes[date('z') % count($quotes)]; // Use day of year for consistent daily quote
+                @endphp
+                {{ $dailyQuote }}
+            </p>
+        </div>
+
         <div style="display:flex; align-items:center; gap:8px;">
             <select id="themeSelector" class="form-input" style="width:auto; padding:6px 10px; font-size:0.8rem;" onchange="changeTheme(this.value)">
                 <option value="dark">Dark</option>
@@ -774,23 +593,6 @@
         @yield('content')
     </div>
 </div>
-
-<!-- Chatbot -->
-<div class="chatbot-container">
-    <div class="chatbot-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-            <span style="font-size:1.2rem;">🤖</span>
-            <span style="font-weight:600;">Task Buddy</span>
-        </div>
-        <button onclick="document.querySelector('.chatbot-container').classList.remove('open')" style="background:none; border:none; color:white; cursor:pointer; font-size:1.2rem;">×</button>
-    </div>
-    <div class="chatbot-messages"></div>
-    <div class="chatbot-input-area">
-        <input type="text" class="chatbot-input" placeholder="Tell me about your goals...">
-    </div>
-</div>
-
-<button class="chatbot-toggle" title="Chat with Task Buddy">💬</button>
 
 </body>
 </html>
