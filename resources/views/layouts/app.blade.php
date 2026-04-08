@@ -542,10 +542,6 @@
             transform: scale(1.05);
             background: var(--c-accent-light);
         }
-
-        .chatbot-container.open + .chatbot-toggle {
-            display: none;
-        }
     </style>
 
     <script>
@@ -613,13 +609,20 @@
             const input = document.querySelector('.chatbot-input');
             const messages = document.querySelector('.chatbot-messages');
 
+            if (!container || !toggle || !input || !messages) {
+                console.error('Chatbot elements not found');
+                return;
+            }
+
             toggle.addEventListener('click', () => {
                 container.classList.add('open');
+                toggle.style.display = 'none';
             });
 
             document.addEventListener('click', (e) => {
                 if (!container.contains(e.target) && !toggle.contains(e.target)) {
                     container.classList.remove('open');
+                    toggle.style.display = 'flex';
                 }
             });
 
@@ -638,6 +641,11 @@
 
         function addMessage(text, sender) {
             const messages = document.querySelector('.chatbot-messages');
+            if (!messages) {
+                console.error('Messages container not found');
+                return;
+            }
+
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${sender}`;
             messageDiv.textContent = text;
@@ -669,7 +677,11 @@
         }
 
         // Initialize chatbot when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initChatbot);
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                initChatbot();
+            }, 100); // Small delay to ensure elements are ready
+        });
     </script>
 </head>
 <body>
