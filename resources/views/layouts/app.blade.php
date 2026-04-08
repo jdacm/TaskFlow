@@ -604,36 +604,23 @@
         ];
 
         function initChatbot() {
-            console.log('Chatbot initialization started...');
-
             const container = document.querySelector('.chatbot-container');
             const toggle = document.querySelector('.chatbot-toggle');
             const input = document.querySelector('.chatbot-input');
             const messages = document.querySelector('.chatbot-messages');
-
-            console.log('Elements found:', {
-                container: !!container,
-                toggle: !!toggle,
-                input: !!input,
-                messages: !!messages
-            });
 
             if (!container || !toggle || !input || !messages) {
                 console.error('Chatbot elements not found');
                 return;
             }
 
-            console.log('Adding event listeners...');
-
             toggle.addEventListener('click', () => {
-                console.log('Toggle clicked');
                 container.classList.add('open');
                 toggle.style.display = 'none';
             });
 
             document.addEventListener('click', (e) => {
                 if (!container.contains(e.target) && !toggle.contains(e.target)) {
-                    console.log('Clicked outside, closing chatbot');
                     container.classList.remove('open');
                     toggle.style.display = 'flex';
                 }
@@ -641,17 +628,13 @@
 
             input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    console.log('Enter pressed with message:', input.value);
-                    sendMessage(input.value);
+                    sendMessage(input.value, input);
                     input.value = '';
                 }
             });
 
-            console.log('Chatbot initialized successfully');
-
             // Add initial greeting
             setTimeout(() => {
-                console.log('Adding initial greeting');
                 addMessage(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)], 'bot');
             }, 1000);
         }
@@ -670,7 +653,7 @@
             messages.scrollTop = messages.scrollHeight;
         }
 
-        function sendMessage(text) {
+        function sendMessage(text, inputElement) {
             if (!text.trim()) return;
 
             addMessage(text, 'user');
