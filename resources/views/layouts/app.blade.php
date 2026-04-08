@@ -536,6 +536,9 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 1001;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .chatbot-toggle:hover {
@@ -678,9 +681,11 @@
 
         // Initialize chatbot when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing chatbot...');
             setTimeout(() => {
                 initChatbot();
-            }, 100); // Small delay to ensure elements are ready
+                console.log('Chatbot initialized');
+            }, 100);
         });
     </script>
 </head>
