@@ -80,7 +80,7 @@ class TaskController extends Controller
     {
         $this->authorizeTask($task);
 
-        $task->load(['subject', 'priority', 'comments.user']);
+        $task->load(['subject', 'priority', 'comments.user', 'subtasks']);
 
         return view('tasks.show', compact('task'));
     }
