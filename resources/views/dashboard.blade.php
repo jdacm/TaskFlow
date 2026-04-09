@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- Stat Cards --}}
-<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:16px; margin-bottom:32px;">
+<div class="dashboard-stat-grid">
     <div class="stat-card total">
         <div class="stat-number" style="color:var(--c-accent-light);">{{ $stats['total'] }}</div>
         <div class="stat-label">Total Tasks</div>
@@ -34,7 +34,7 @@
         </div>
     </div>
 </div>
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<div class="dashboard-two-col-grid">
 
     {{-- Today's Tasks --}}
     <div class="card">
@@ -56,7 +56,7 @@
                 </form>
 
                 <div style="flex:1; min-width:0;">
-                    <a href="{{ route('tasks.show', $task) }}" style="color:{{ $task->isCompleted() ? 'var(--c-muted)' : 'var(--c-text)' }}; text-decoration:none; font-weight:500; font-size:0.875rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; {{ $task->isCompleted() ? 'text-decoration:line-through;' : '' }}">
+                    <a href="{{ route('tasks.show', $task) }}" style="color:{{ $task->isCompleted() ? 'var(--c-muted)' : 'var(--c-text)' }}; text-decoration:none; font-weight:500; font-size:0.875rem; display:block; overflow:hidden; text-overflow:ellipsis; {{ $task->isCompleted() ? 'text-decoration:line-through;' : '' }}">
                         {{ $task->title }}
                     </a>
                     <div style="font-size:0.75rem; color:var(--c-muted); margin-top:2px;">
@@ -94,7 +94,7 @@
                 </div>
 
                 <div style="flex:1; min-width:0;">
-                    <a href="{{ route('tasks.show', $task) }}" style="color:var(--c-muted); text-decoration:none; font-weight:500; font-size:0.875rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-decoration:line-through;">
+                    <a href="{{ route('tasks.show', $task) }}" style="color:var(--c-muted); text-decoration:none; font-weight:500; font-size:0.875rem; display:block; overflow:hidden; text-overflow:ellipsis; text-decoration:line-through;">
                         {{ $task->title }}
                     </a>
                     <div style="font-size:0.75rem; color:var(--c-muted); margin-top:2px;">
@@ -120,7 +120,7 @@
 
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;">
+<div class="dashboard-two-col-grid" style="margin-top:24px;">
 
     {{-- Upcoming Tasks --}}
     <div class="card">
@@ -138,7 +138,7 @@
                 </form>
 
                 <div style="flex:1; min-width:0;">
-                    <a href="{{ route('tasks.show', $task) }}" style="color:var(--c-text); text-decoration:none; font-weight:500; font-size:0.875rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <a href="{{ route('tasks.show', $task) }}" style="color:var(--c-text); text-decoration:none; font-weight:500; font-size:0.875rem; display:block; overflow:hidden; text-overflow:ellipsis;">
                         {{ $task->title }}
                     </a>
                     <div style="font-size:0.75rem; color:var(--c-muted); margin-top:2px;">
@@ -180,7 +180,7 @@
                 </div>
 
                 <div style="flex:1; min-width:0;">
-                    <a href="{{ route('tasks.show', $task) }}" style="color:var(--c-text); text-decoration:none; font-weight:500; font-size:0.875rem; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                    <a href="{{ route('tasks.show', $task) }}" style="color:var(--c-text); text-decoration:none; font-weight:500; font-size:0.875rem; display:block; overflow:hidden; text-overflow:ellipsis;">
                         {{ $task->title }}
                     </a>
                     <div style="font-size:0.75rem; margin-top:2px; {{ $task->isOverdue() ? 'color:var(--c-danger)' : 'color:var(--c-muted)' }};">

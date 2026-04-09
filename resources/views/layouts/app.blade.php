@@ -14,6 +14,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 
     <!-- Tailwind / Vite -->
+    <script>
+        // Apply persisted theme as early as possible to avoid flashbacks to dark.
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -121,6 +130,7 @@
         .main-content {
             margin-left: 240px;
             min-height: 100vh;
+            transition: margin-left 0.25s ease;
         }
 
         .top-bar {
@@ -130,6 +140,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
             position: sticky;
             top: 0;
             z-index: 40;
@@ -137,6 +149,9 @@
 
         .page-content {
             padding: 32px;
+            max-width: 1320px;
+            margin: 0 auto;
+            width: min(100%, 1320px);
         }
 
         /* Cards */
@@ -145,6 +160,91 @@
             border: 1px solid var(--c-border);
             border-radius: 12px;
             padding: 20px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .page-content .profile-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        .dashboard-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .dashboard-two-col-grid > .card {
+            min-width: 0;
+        }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--c-border);
+            flex-wrap: wrap;
+        }
+
+        .task-row > * {
+            min-width: 0;
+        }
+
+        .theme-selector {
+            width: auto;
+        }
+
+        .theme-dropdown {
+            min-width: 180px;
+        }
+
+        .page-content .profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .page-content .profile-header .profile-avatar {
+            min-width: 72px;
+            min-height: 72px;
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--c-accent);
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .page-content .profile-summary {
+            display: grid;
+            gap: 16px;
+        }
+
+        .page-content .profile-block {
+            padding: 24px;
+        }
+
+        .page-content .profile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         /* Buttons */
@@ -350,16 +450,66 @@
             padding: 4px;
         }
 
+        @media (max-width: 1024px) {
+            .page-content {
+                padding: 24px;
+            }
+
+            .page-content .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-content .profile-block {
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.25s ease;
+                width: 100%;
+                max-width: 320px;
             }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
             .mobile-menu-btn { display: flex; }
             .page-content { padding: 16px; }
             .top-bar { padding: 12px 16px; }
+            .top-bar { justify-content: space-between; }
+            .motivational-quote { display: none; }
+            .page-content .profile-grid { grid-template-columns: 1fr; }
+            .page-content .profile-block { padding: 18px; }
+            .theme-selector {
+                width: 100%;
+            }
+            .theme-btn {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .theme-dropdown {
+                left: 0;
+                right: auto;
+                min-width: 100%;
+            }
+            .nav-link {
+                padding: 12px 18px;
+                font-size: 0.95rem;
+            }
+            .sidebar-logo {
+                padding: 20px 18px 14px;
+            }
+            .main-content {
+                min-height: auto;
+            }
+            table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+            th, td {
+                white-space: nowrap;
+            }
         }
 
         /* Modern Theme Selector */
@@ -557,12 +707,12 @@
     </style>
 
     <script>
-        // Initialize theme on page load
-        (function() {
+        // Initialize theme on page load after the DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeDisplay();
-        })();
+        });
 
         // Toggle theme dropdown
         function toggleThemeDropdown() {
@@ -579,15 +729,26 @@
             }
         }
 
-        // Close dropdown when clicking outside
+        // Close dropdown and mobile sidebar when clicking outside
         document.addEventListener('click', function(e) {
             const themeSelector = document.querySelector('.theme-selector');
             const dropdown = document.getElementById('themeDropdown');
             const btn = document.getElementById('themeBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
 
             if (!themeSelector.contains(e.target)) {
                 dropdown.classList.remove('open');
                 btn.classList.remove('open');
+            }
+
+            if (sidebar && sidebar.classList.contains('open')) {
+                const clickedInsideSidebar = sidebar.contains(e.target);
+                const clickedMenuButton = mobileMenuBtn && mobileMenuBtn.contains(e.target);
+
+                if (!clickedInsideSidebar && !clickedMenuButton) {
+                    sidebar.classList.remove('open');
+                }
             }
         });
 
@@ -618,7 +779,9 @@
                 'ocean': 'Ocean',
                 'sunset': 'Sunset'
             };
-            textElement.textContent = themeNames[currentTheme] || 'Dark';
+            if (textElement) {
+                textElement.textContent = themeNames[currentTheme] || 'Dark';
+            }
 
             // Update active state in dropdown
             document.querySelectorAll('.theme-option').forEach(option => {
@@ -730,7 +893,7 @@
                     </svg>
                 </button>
                 <div id="themeDropdown" class="theme-dropdown">
-                    <div class="theme-option active" data-theme="dark" onclick="selectTheme('dark')">
+                    <div class="theme-option" data-theme="dark" onclick="selectTheme('dark')">
                         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
