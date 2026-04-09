@@ -362,23 +362,144 @@
             .top-bar { padding: 12px 16px; }
         }
 
-        /* Theme toggle button */
-        .theme-toggle-btn {
-            background: none;
-            border: 1px solid var(--c-border);
-            border-radius: 8px;
-            padding: 6px 10px;
+        /* Modern Theme Selector */
+        .theme-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
             cursor: pointer;
             color: var(--c-text);
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.15s ease;
+            gap: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            justify-content: space-between;
+            backdrop-filter: blur(8px);
+            position: relative;
         }
 
-        .theme-toggle-btn:hover {
-            background: rgba(124,106,247,0.1);
+        /* Light theme adjustments */
+        [data-theme="light"] .theme-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--c-text);
+        }
+
+        .theme-btn:hover {
+            background: rgba(124,106,247,0.15);
             border-color: var(--c-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Light theme hover */
+        [data-theme="light"] .theme-btn:hover {
+            background: rgba(124,106,247,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .theme-btn svg {
+            transition: transform 0.2s ease;
+            opacity: 0.8;
+        }
+
+        .theme-btn.open svg {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(15, 15, 19, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            margin-top: 8px;
+            backdrop-filter: blur(12px);
+        }
+
+        /* Light theme dropdown */
+        [data-theme="light"] .theme-dropdown {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+
+        .theme-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #e8e8f0;
+            transition: all 0.15s ease;
+            border-radius: 8px;
+            margin: 4px 8px;
+        }
+
+        /* Light theme option text */
+        [data-theme="light"] .theme-option {
+            color: #1a1a2e;
+        }
+
+        .theme-option:hover {
+            background: rgba(124,106,247,0.15);
+        }
+
+        /* Light theme option hover */
+        [data-theme="light"] .theme-option:hover {
+            background: rgba(124,106,247,0.1);
+        }
+
+        .theme-option.active {
+            background: var(--c-accent);
+            color: white;
+        }
+
+        .theme-option svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            stroke: #e8e8f0;
+        }
+
+        /* Light theme icon colors */
+        [data-theme="light"] .theme-option svg {
+            stroke: #1a1a2e;
+        }
+
+        .theme-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
+
+        /* Light theme divider */
+        [data-theme="light"] .theme-divider {
+            background: rgba(0, 0, 0, 0.1);
         }
 
         /* Additional Themes */
@@ -440,44 +561,73 @@
         (function() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
-            document.getElementById('themeSelector').value = savedTheme;
+            updateThemeDisplay();
         })();
 
-        // Change theme function
-        function changeTheme(theme) {
-            document.documentElement.setAttribute('data-theme', theme);
-            localStorage.setItem('theme', theme);
-            updateThemeIcon();
-        }
+        // Toggle theme dropdown
+        function toggleThemeDropdown() {
+            const dropdown = document.getElementById('themeDropdown');
+            const btn = document.getElementById('themeBtn');
+            const isOpen = dropdown.classList.contains('open');
 
-        // Toggle theme function (legacy support)
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme') || 'dark';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            document.getElementById('themeSelector').value = newTheme;
-            updateThemeIcon();
-        }
-
-        // Update button icon based on current theme
-        function updateThemeIcon() {
-            const btn = document.getElementById('themeToggleBtn');
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-
-            if (currentTheme === 'dark') {
-                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-                btn.title = 'Switch to Light Mode';
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                btn.classList.remove('open');
             } else {
-                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-                btn.title = 'Switch to Dark Mode';
+                dropdown.classList.add('open');
+                btn.classList.add('open');
             }
         }
 
-        // Set initial icon
-        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const themeSelector = document.querySelector('.theme-selector');
+            const dropdown = document.getElementById('themeDropdown');
+            const btn = document.getElementById('themeBtn');
+
+            if (!themeSelector.contains(e.target)) {
+                dropdown.classList.remove('open');
+                btn.classList.remove('open');
+            }
+        });
+
+        // Select theme function
+        function selectTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateThemeDisplay();
+
+            // Close dropdown
+            const dropdown = document.getElementById('themeDropdown');
+            const btn = document.getElementById('themeBtn');
+            dropdown.classList.remove('open');
+            btn.classList.remove('open');
+        }
+
+        // Update theme display
+        function updateThemeDisplay() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const textElement = document.getElementById('currentThemeText');
+
+            // Update button text
+            const themeNames = {
+                'dark': 'Dark',
+                'light': 'Light',
+                'opera': 'Opera',
+                'forest': 'Forest',
+                'ocean': 'Ocean',
+                'sunset': 'Sunset'
+            };
+            textElement.textContent = themeNames[currentTheme] || 'Dark';
+
+            // Update active state in dropdown
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-theme') === currentTheme) {
+                    option.classList.add('active');
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -572,15 +722,53 @@
         </div>
 
         <div style="display:flex; align-items:center; gap:8px;">
-            <select id="themeSelector" class="form-input" style="width:auto; padding:6px 10px; font-size:0.8rem;" onchange="changeTheme(this.value)">
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-                <option value="opera">Opera</option>
-                <option value="forest">Forest</option>
-                <option value="ocean">Ocean</option>
-                <option value="sunset">Sunset</option>
-            </select>
-            <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()"></button>
+            <div class="theme-selector">
+                <button id="themeBtn" class="theme-btn" onclick="toggleThemeDropdown()">
+                    <span id="currentThemeText">Dark</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                <div id="themeDropdown" class="theme-dropdown">
+                    <div class="theme-option active" data-theme="dark" onclick="selectTheme('dark')">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        Dark
+                    </div>
+                    <div class="theme-option" data-theme="light" onclick="selectTheme('light')">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        Light
+                    </div>
+                    <div class="theme-divider"></div>
+                    <div class="theme-option" data-theme="opera" onclick="selectTheme('opera')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #ff1b5a, #ff6b8a); border-radius:50%;"></div>
+                        Opera
+                    </div>
+                    <div class="theme-option" data-theme="forest" onclick="selectTheme('forest')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #22c55e, #16a34a); border-radius:50%;"></div>
+                        Forest
+                    </div>
+                    <div class="theme-option" data-theme="ocean" onclick="selectTheme('ocean')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #3b82f6, #1d4ed8); border-radius:50%;"></div>
+                        Ocean
+                    </div>
+                    <div class="theme-option" data-theme="sunset" onclick="selectTheme('sunset')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #f59e0b, #d97706); border-radius:50%;"></div>
+                        Sunset
+                    </div>
+                </div>
+            </div>
             <a href="{{ route('tasks.create') }}" class="btn btn-primary btn-sm">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 New Task
