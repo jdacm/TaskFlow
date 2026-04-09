@@ -37,6 +37,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('dashboard', compact('stats', 'recentTasks', 'upcomingTasks'));
+        // Recent completed tasks (history)
+        $recentCompleted = Task::with(['subject', 'priority'])
+            ->forUser($userId)
+            ->byStatus('completed')
+            ->orderBy('updated_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Today's tasks
+        $todaysTasks = Task::with(['subject', 'priority'])
+            ->forUser($userId)
+            ->whereDate('due_date', today())
+            ->orderBy('due_date')
+            ->get();
+
+        return view('dashboard', compact('stats', 'recentTasks', 'upcomingTasks', 'recentCompleted', 'todaysTasks'));
     }
 }
