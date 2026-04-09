@@ -44,6 +44,11 @@ class Task extends Model
         return $this->hasMany(TaskComment::class)->latest();
     }
 
+    public function subtasks()
+    {
+        return $this->hasMany(Subtask::class);
+    }
+
     // Scopes
     public function scopeForUser($query, $userId)
     {

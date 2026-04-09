@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SubtaskController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('tasks.toggle-complete');
     Route::post('/tasks/{task}/comments', [TaskController::class, 'addComment'])
         ->name('tasks.comments.store');
+
+    // Subtasks
+    Route::post('/tasks/{task}/subtasks', [SubtaskController::class, 'store'])
+        ->name('subtasks.store');
+    Route::patch('/subtasks/{subtask}/toggle', [SubtaskController::class, 'toggle'])
+        ->name('subtasks.toggle');
+    Route::delete('/subtasks/{subtask}', [SubtaskController::class, 'destroy'])
+        ->name('subtasks.destroy');
 
     // Subjects
     Route::resource('subjects', SubjectController::class)->only(['index', 'create', 'store', 'destroy']);

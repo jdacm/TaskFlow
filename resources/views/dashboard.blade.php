@@ -26,60 +26,14 @@
         <div class="stat-number" style="color:var(--c-danger);">{{ $stats['overdue'] }}</div>
         <div class="stat-label">Overdue</div>
     </div>
-</div>
-
-{{-- Quick Actions --}}
-<div class="card" style="margin-bottom:32px;">
-    <h2 style="font-size:1rem; font-weight:700; margin:0 0 16px 0;">Quick Actions</h2>
-    <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <a href="{{ route('tasks.create') }}" class="btn btn-primary">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-            New Task
-        </a>
-        <a href="{{ route('tasks.index', ['status' => 'pending']) }}" class="btn btn-secondary">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-            View Pending
-        </a>
-        <a href="{{ route('tasks.index', ['due_date' => today()->format('Y-m-d')]) }}" class="btn btn-secondary">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Today's Tasks
-        </a>
-        <a href="{{ route('subjects.index') }}" class="btn btn-secondary">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-            Manage Subjects
-        </a>
+    <div class="stat-card" style="border: 1px solid {{ $colors['border_color'] ?? 'var(--c-border)' }}; background: {{ $colors['bg_color'] ?? 'var(--c-background)' }};">
+        <div class="stat-number" style="font-size:2.5rem; font-weight:900; {{ $colors['text_color'] ?? 'color:var(--c-accent-light)' }};">{{ $productivityData['productivity_score'] }}%</div>
+        <div class="stat-label">Productivity Score</div>
+        <div style="height:6px; background:rgba(255,255,255,0.05); border-radius:9999px; overflow:hidden; margin-top:8px;">
+            <div style="height:100%; width:{{ $productivityData['productivity_score'] }}%; background:{{ $colors['progress_color'] ?? 'var(--c-accent-light)' }}; border-radius:9999px;"></div>
+        </div>
     </div>
 </div>
-
-{{-- Quick Add Task --}}
-<div class="card" style="margin-bottom:32px;">
-    <h2 style="font-size:1rem; font-weight:700; margin:0 0 16px 0;">Quick Add Task</h2>
-    <form method="POST" action="{{ route('tasks.store') }}" style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
-        @csrf
-        <div style="flex:1; min-width:200px;">
-            <label class="form-label" style="margin-bottom:6px;">Task Title</label>
-            <input type="text" name="title" class="form-input" placeholder="What needs to be done?" required>
-        </div>
-        <div style="min-width:140px;">
-            <label class="form-label" style="margin-bottom:6px;">Due Date</label>
-            <input type="date" name="due_date" class="form-input" value="{{ today()->format('Y-m-d') }}" required>
-        </div>
-        <div style="min-width:120px;">
-            <label class="form-label" style="margin-bottom:6px;">Priority</label>
-            <select name="priority_id" class="form-input">
-                <option value="">No Priority</option>
-                @foreach(\App\Models\Priority::orderBy('level')->get() as $priority)
-                    <option value="{{ $priority->id }}">{{ $priority->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Task
-        </button>
-    </form>
-</div>
-
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
 
     {{-- Today's Tasks --}}
