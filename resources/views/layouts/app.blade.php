@@ -14,6 +14,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
 
     <!-- Tailwind / Vite -->
+    <script>
+        // Apply persisted theme as early as possible to avoid flashbacks to dark.
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -121,6 +130,7 @@
         .main-content {
             margin-left: 240px;
             min-height: 100vh;
+            transition: margin-left 0.25s ease;
         }
 
         .top-bar {
@@ -130,6 +140,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
             position: sticky;
             top: 0;
             z-index: 40;
@@ -137,6 +149,9 @@
 
         .page-content {
             padding: 32px;
+            max-width: 1320px;
+            margin: 0 auto;
+            width: min(100%, 1320px);
         }
 
         /* Cards */
@@ -145,6 +160,91 @@
             border: 1px solid var(--c-border);
             border-radius: 12px;
             padding: 20px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .page-content .profile-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+            gap: 24px;
+        }
+
+        .dashboard-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .dashboard-two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .dashboard-two-col-grid > .card {
+            min-width: 0;
+        }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--c-border);
+            flex-wrap: wrap;
+        }
+
+        .task-row > * {
+            min-width: 0;
+        }
+
+        .theme-selector {
+            width: auto;
+        }
+
+        .theme-dropdown {
+            min-width: 180px;
+        }
+
+        .page-content .profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .page-content .profile-header .profile-avatar {
+            min-width: 72px;
+            min-height: 72px;
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--c-accent);
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .page-content .profile-summary {
+            display: grid;
+            gap: 16px;
+        }
+
+        .page-content .profile-block {
+            padding: 24px;
+        }
+
+        .page-content .profile-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         /* Buttons */
@@ -350,74 +450,347 @@
             padding: 4px;
         }
 
+        @media (max-width: 1024px) {
+            .page-content {
+                padding: 24px;
+            }
+
+            .page-content .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-content .profile-block {
+                padding: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
                 transition: transform 0.25s ease;
+                width: 100%;
+                max-width: 320px;
             }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
             .mobile-menu-btn { display: flex; }
             .page-content { padding: 16px; }
             .top-bar { padding: 12px 16px; }
+            .top-bar { justify-content: space-between; }
+            .motivational-quote { display: none; }
+            .page-content .profile-grid { grid-template-columns: 1fr; }
+            .page-content .profile-block { padding: 18px; }
+            .theme-selector {
+                width: 100%;
+            }
+            .theme-btn {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .theme-dropdown {
+                left: 0;
+                right: auto;
+                min-width: 100%;
+            }
+            .nav-link {
+                padding: 12px 18px;
+                font-size: 0.95rem;
+            }
+            .sidebar-logo {
+                padding: 20px 18px 14px;
+            }
+            .main-content {
+                min-height: auto;
+            }
+            table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+            th, td {
+                white-space: nowrap;
+            }
         }
 
-        /* Theme toggle button */
-        .theme-toggle-btn {
-            background: none;
-            border: 1px solid var(--c-border);
-            border-radius: 8px;
-            padding: 6px 10px;
+        /* Modern Theme Selector */
+        .theme-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .theme-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 8px 12px;
             cursor: pointer;
             color: var(--c-text);
             display: flex;
             align-items: center;
-            justify-content: center;
-            transition: all 0.15s ease;
+            gap: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            justify-content: space-between;
+            backdrop-filter: blur(8px);
+            position: relative;
         }
 
-        .theme-toggle-btn:hover {
-            background: rgba(124,106,247,0.1);
+        /* Light theme adjustments */
+        [data-theme="light"] .theme-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--c-text);
+        }
+
+        .theme-btn:hover {
+            background: rgba(124,106,247,0.15);
             border-color: var(--c-accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Light theme hover */
+        [data-theme="light"] .theme-btn:hover {
+            background: rgba(124,106,247,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .theme-btn svg {
+            transition: transform 0.2s ease;
+            opacity: 0.8;
+        }
+
+        .theme-btn.open svg {
+            transform: rotate(180deg);
+            opacity: 1;
+        }
+
+        .theme-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(15, 15, 19, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            min-width: 160px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            margin-top: 8px;
+            backdrop-filter: blur(12px);
+        }
+
+        /* Light theme dropdown */
+        [data-theme="light"] .theme-dropdown {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+
+        .theme-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #e8e8f0;
+            transition: all 0.15s ease;
+            border-radius: 8px;
+            margin: 4px 8px;
+        }
+
+        /* Light theme option text */
+        [data-theme="light"] .theme-option {
+            color: #1a1a2e;
+        }
+
+        .theme-option:hover {
+            background: rgba(124,106,247,0.15);
+        }
+
+        /* Light theme option hover */
+        [data-theme="light"] .theme-option:hover {
+            background: rgba(124,106,247,0.1);
+        }
+
+        .theme-option.active {
+            background: var(--c-accent);
+            color: white;
+        }
+
+        .theme-option svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            stroke: #e8e8f0;
+        }
+
+        /* Light theme icon colors */
+        [data-theme="light"] .theme-option svg {
+            stroke: #1a1a2e;
+        }
+
+        .theme-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+        }
+
+        /* Light theme divider */
+        [data-theme="light"] .theme-divider {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Additional Themes */
+        [data-theme="opera"] {
+            --c-bg: #1a1a1a;
+            --c-surface: #2a2a2a;
+            --c-border: #404040;
+            --c-accent: #ff1b5a;
+            --c-accent-light: #ff6b8a;
+            --c-text: #ffffff;
+            --c-muted: #cccccc;
+            --c-success: #00ff88;
+            --c-danger: #ff4757;
+            --c-warning: #ffa500;
+        }
+
+        [data-theme="forest"] {
+            --c-bg: #0a1f0a;
+            --c-surface: #1a3a1a;
+            --c-border: #2a5a2a;
+            --c-accent: #4ade80;
+            --c-accent-light: #6ee7a0;
+            --c-text: #e8f5e8;
+            --c-muted: #a8d5a8;
+            --c-success: #22c55e;
+            --c-danger: #ef4444;
+            --c-warning: #f59e0b;
+        }
+
+        [data-theme="ocean"] {
+            --c-bg: #0a1929;
+            --c-surface: #1a365d;
+            --c-border: #2a4a7a;
+            --c-accent: #06b6d4;
+            --c-accent-light: #22d3ee;
+            --c-text: #e0f2fe;
+            --c-muted: #a8d5f0;
+            --c-success: #10b981;
+            --c-danger: #ef4444;
+            --c-warning: #f59e0b;
+        }
+
+        [data-theme="sunset"] {
+            --c-bg: #2d1b69;
+            --c-surface: #4c2a85;
+            --c-border: #6b46c1;
+            --c-accent: #f97316;
+            --c-accent-light: #fb923c;
+            --c-text: #fef3c7;
+            --c-muted: #d4b5f0;
+            --c-success: #22c55e;
+            --c-danger: #ef4444;
+            --c-warning: #eab308;
         }
     </style>
 
     <script>
-        // Initialize theme on page load
-        (function() {
+        // Initialize theme on page load after the DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
-        })();
+            updateThemeDisplay();
+        });
 
-        // Toggle theme function
-        function toggleTheme() {
-            const html = document.documentElement;
-            const currentTheme = html.getAttribute('data-theme') || 'dark';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update button icon
-            updateThemeIcon();
-        }
+        // Toggle theme dropdown
+        function toggleThemeDropdown() {
+            const dropdown = document.getElementById('themeDropdown');
+            const btn = document.getElementById('themeBtn');
+            const isOpen = dropdown.classList.contains('open');
 
-        // Update button icon based on current theme
-        function updateThemeIcon() {
-            const btn = document.getElementById('themeToggleBtn');
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-            
-            if (currentTheme === 'dark') {
-                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
-                btn.title = 'Switch to Light Mode';
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                btn.classList.remove('open');
             } else {
-                btn.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-                btn.title = 'Switch to Dark Mode';
+                dropdown.classList.add('open');
+                btn.classList.add('open');
             }
         }
 
-        // Set initial icon
-        document.addEventListener('DOMContentLoaded', updateThemeIcon);
+        // Close dropdown and mobile sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            const themeSelector = document.querySelector('.theme-selector');
+            const dropdown = document.getElementById('themeDropdown');
+            const btn = document.getElementById('themeBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+
+            if (!themeSelector.contains(e.target)) {
+                dropdown.classList.remove('open');
+                btn.classList.remove('open');
+            }
+
+            if (sidebar && sidebar.classList.contains('open')) {
+                const clickedInsideSidebar = sidebar.contains(e.target);
+                const clickedMenuButton = mobileMenuBtn && mobileMenuBtn.contains(e.target);
+
+                if (!clickedInsideSidebar && !clickedMenuButton) {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+
+        // Select theme function
+        function selectTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateThemeDisplay();
+
+            // Close dropdown
+            const dropdown = document.getElementById('themeDropdown');
+            const btn = document.getElementById('themeBtn');
+            dropdown.classList.remove('open');
+            btn.classList.remove('open');
+        }
+
+        // Update theme display
+        function updateThemeDisplay() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const textElement = document.getElementById('currentThemeText');
+
+            // Update button text
+            const themeNames = {
+                'dark': 'Dark',
+                'light': 'Light',
+                'opera': 'Opera',
+                'forest': 'Forest',
+                'ocean': 'Ocean',
+                'sunset': 'Sunset'
+            };
+            if (textElement) {
+                textElement.textContent = themeNames[currentTheme] || 'Dark';
+            }
+
+            // Update active state in dropdown
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.getAttribute('data-theme') === currentTheme) {
+                    option.classList.add('active');
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -452,6 +825,12 @@
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             Priorities
         </a>
+
+        <div class="nav-section">Account</div>
+        <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+        </a>
     </div>
 
     <!-- User section -->
@@ -477,8 +856,82 @@
             </button>
             <h1 class="font-display" style="font-size:1.1rem; font-weight:700; margin:0;">@yield('title', 'Dashboard')</h1>
         </div>
+
+        {{-- Daily Motivational Quote --}}
+        <div class="motivational-quote" style="flex:1; text-align:center; max-width:400px; margin:0 20px;">
+            <p style="margin:0; font-size:0.9rem; color:var(--c-muted); font-style:italic; line-height:1.4;">
+                @php
+                    $quotes = [
+                        "The only way to do great work is to love what you do. – Steve Jobs",
+                        "Believe you can and you're halfway there. – Theodore Roosevelt",
+                        "The future belongs to those who believe in the beauty of their dreams. – Eleanor Roosevelt",
+                        "You miss 100% of the shots you don't take. – Wayne Gretzky",
+                        "The best way to predict the future is to create it. – Peter Drucker",
+                        "Don't watch the clock; do what it does. Keep going. – Sam Levenson",
+                        "The only limit to our realization of tomorrow will be our doubts of today. – Franklin D. Roosevelt",
+                        "Success is not final, failure is not fatal: It is the courage to continue that counts. – Winston Churchill",
+                        "Your time is limited, so don't waste it living someone else's life. – Steve Jobs",
+                        "The way to get started is to quit talking and begin doing. – Walt Disney",
+                        "Keep your face always toward the sunshine—and shadows will fall behind you. – Walt Whitman",
+                        "The secret of getting ahead is getting started. – Mark Twain",
+                        "What lies behind us and what lies before us are tiny matters compared to what lies within us. – Ralph Waldo Emerson",
+                        "You can't build a reputation on what you are going to do. – Henry Ford",
+                        "The only person you are destined to become is the person you decide to be. – Ralph Waldo Emerson"
+                    ];
+                    $dailyQuote = $quotes[date('z') % count($quotes)]; // Use day of year for consistent daily quote
+                @endphp
+                {{ $dailyQuote }}
+            </p>
+        </div>
+
         <div style="display:flex; align-items:center; gap:8px;">
-            <button id="themeToggleBtn" class="theme-toggle-btn" onclick="toggleTheme()"></button>
+            <div class="theme-selector">
+                <button id="themeBtn" class="theme-btn" onclick="toggleThemeDropdown()">
+                    <span id="currentThemeText">Dark</span>
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <polyline points="6,9 12,15 18,9"></polyline>
+                    </svg>
+                </button>
+                <div id="themeDropdown" class="theme-dropdown">
+                    <div class="theme-option" data-theme="dark" onclick="selectTheme('dark')">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        Dark
+                    </div>
+                    <div class="theme-option" data-theme="light" onclick="selectTheme('light')">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        Light
+                    </div>
+                    <div class="theme-divider"></div>
+                    <div class="theme-option" data-theme="opera" onclick="selectTheme('opera')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #ff1b5a, #ff6b8a); border-radius:50%;"></div>
+                        Opera
+                    </div>
+                    <div class="theme-option" data-theme="forest" onclick="selectTheme('forest')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #22c55e, #16a34a); border-radius:50%;"></div>
+                        Forest
+                    </div>
+                    <div class="theme-option" data-theme="ocean" onclick="selectTheme('ocean')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #3b82f6, #1d4ed8); border-radius:50%;"></div>
+                        Ocean
+                    </div>
+                    <div class="theme-option" data-theme="sunset" onclick="selectTheme('sunset')">
+                        <div style="width:16px; height:16px; background:linear-gradient(45deg, #f59e0b, #d97706); border-radius:50%;"></div>
+                        Sunset
+                    </div>
+                </div>
+            </div>
             <a href="{{ route('tasks.create') }}" class="btn btn-primary btn-sm">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 New Task

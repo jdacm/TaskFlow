@@ -3,10 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Services\ProductivityScoreService;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    private ProductivityScoreService $productivityService;
+
+    public function __construct(ProductivityScoreService $productivityService)
+    {
+        $this->productivityService = $productivityService;
+    }
+
     public function __invoke()
     {
         $userId = Auth::id();
@@ -37,6 +45,35 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('dashboard', compact('stats', 'recentTasks', 'upcomingTasks'));
+        // Recent completed tasks (history)
+        $recentCompleted = Task::with(['subject', 'priority'])
+            ->forUser($userId)
+            ->byStatus('completed')
+            ->orderBy('updated_at', 'desc')
+            ->take(5)
+            ->get();
+
+        // Today's tasks
+        $todaysTasks = Task::with(['subject', 'priority'])
+            ->forUser($userId)
+            ->whereDate('due_date', today())
+            ->orderBy('due_date')
+            ->get();
+
+        // Calculate productivity score
+        $productivityData = $this->productivityService->calculateWeeklyScore($userId);
+        $colors = $this->productivityService->getScoreColors($productivityData['productivity_score']);
+        $message = $this->productivityService->getMotivationalMessage($productivityData['productivity_score']);
+
+        return view('dashboard', compact(
+            'stats', 
+            'recentTasks', 
+            'upcomingTasks', 
+            'recentCompleted', 
+            'todaysTasks',
+            'productivityData', 
+            'colors', 
+            'message'
+        ));
     }
 }
