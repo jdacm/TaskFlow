@@ -109,6 +109,37 @@
 
         .form-input.error { border-color: var(--c-danger); }
 
+        .password-input-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--c-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            color: var(--c-text);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .eye-icon {
+            width: 20px;
+            height: 20px;
+        }
+
         .btn {
             display: inline-flex;
             align-items: center;
@@ -221,15 +252,27 @@
             <!-- Password -->
             <div class="form-group">
                 <label class="form-label" for="password">Password</label>
-                <input
-                    id="password"
-                    class="form-input {{ $errors->has('password') ? 'error' : '' }}"
-                    type="password"
-                    name="password"
-                    required
-                    autocomplete="new-password"
-                    placeholder="Create a password"
-                >
+                <div class="password-input-container">
+                    <input
+                        id="password"
+                        class="form-input {{ $errors->has('password') ? 'error' : '' }}"
+                        type="password"
+                        name="password"
+                        required
+                        autocomplete="new-password"
+                        placeholder="Create a password"
+                    >
+                    <button type="button" class="password-toggle" data-target="password">
+                        <svg class="eye-icon eye-show" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <svg class="eye-icon eye-hide" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
                 @error('password')
                     <div class="error-msg">{{ $message }}</div>
                 @enderror
@@ -238,15 +281,27 @@
             <!-- Confirm Password -->
             <div class="form-group">
                 <label class="form-label" for="password_confirmation">Confirm Password</label>
-                <input
-                    id="password_confirmation"
-                    class="form-input {{ $errors->has('password_confirmation') ? 'error' : '' }}"
-                    type="password"
-                    name="password_confirmation"
-                    required
-                    autocomplete="new-password"
-                    placeholder="Confirm your password"
-                >
+                <div class="password-input-container">
+                    <input
+                        id="password_confirmation"
+                        class="form-input {{ $errors->has('password_confirmation') ? 'error' : '' }}"
+                        type="password"
+                        name="password_confirmation"
+                        required
+                        autocomplete="new-password"
+                        placeholder="Confirm your password"
+                    >
+                    <button type="button" class="password-toggle" data-target="password_confirmation">
+                        <svg class="eye-icon eye-show" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <svg class="eye-icon eye-hide" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display: none;">
+                            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
                 @error('password_confirmation')
                     <div class="error-msg">{{ $message }}</div>
                 @enderror
@@ -269,5 +324,31 @@
             </a>
         </div>
     </div>
+
+    <script>
+        // Password visibility toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordToggles = document.querySelectorAll('.password-toggle');
+
+            passwordToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const passwordInput = document.getElementById(targetId);
+                    const eyeShow = this.querySelector('.eye-show');
+                    const eyeHide = this.querySelector('.eye-hide');
+
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        eyeShow.style.display = 'none';
+                        eyeHide.style.display = 'block';
+                    } else {
+                        passwordInput.type = 'password';
+                        eyeShow.style.display = 'block';
+                        eyeHide.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

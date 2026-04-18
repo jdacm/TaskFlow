@@ -325,10 +325,115 @@
 
         select.form-input option { background: var(--c-surface); }
 
+        /* Date input calendar icon styling */
+        input[type="date"].form-input {
+            position: relative;
+            background-image: none;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        /* Custom calendar icon using CSS pseudo-element */
+        input[type="date"].form-input::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--c-muted);
+            mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3e%3c/svg%3e") no-repeat center;
+            mask-size: contain;
+            -webkit-mask: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5' /%3e%3c/svg%3e") no-repeat center;
+            -webkit-mask-size: contain;
+            pointer-events: none;
+            transition: background-color 0.15s;
+        }
+
+        input[type="date"].form-input:hover::after {
+            background: var(--c-accent);
+        }
+
+        input[type="date"].form-input:focus::after {
+            background: var(--c-accent);
+        }
+
+        /* Make the calendar picker indicator visible and clickable */
+        input[type="date"].form-input::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Ensure text is visible */
+        input[type="date"].form-input::-webkit-datetime-edit {
+            color: var(--c-text);
+        }
+
+        input[type="date"].form-input::-webkit-datetime-edit-fields-wrapper {
+            color: var(--c-text);
+        }
+
+        input[type="date"].form-input::-webkit-datetime-edit-text,
+        input[type="date"].form-input::-webkit-datetime-edit-month-field,
+        input[type="date"].form-input::-webkit-datetime-edit-day-field,
+        input[type="date"].form-input::-webkit-datetime-edit-year-field {
+            color: var(--c-text);
+        }
+
         .error-msg {
             color: var(--c-danger);
             font-size: 0.8rem;
             margin-top: 4px;
+        }
+
+        .date-feedback {
+            font-size: 0.75rem;
+            margin-top: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .date-feedback.valid {
+            color: var(--c-success);
+            background: rgba(34,197,94,0.1);
+        }
+
+        .date-feedback.invalid {
+            color: var(--c-danger);
+            background: rgba(239,68,68,0.1);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--c-surface);
+            border: 1px solid var(--c-border);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
 
         /* Badges */
@@ -791,6 +896,91 @@
                 }
             });
         }
+
+        // Date input validation
+        function validateDateInput(input) {
+            const feedback = document.getElementById('date-feedback');
+            if (!feedback) return;
+
+            const value = input.value;
+            const minDate = input.getAttribute('min');
+            const maxDate = input.getAttribute('max');
+
+            if (!value) {
+                feedback.style.display = 'none';
+                return;
+            }
+
+            const inputDate = new Date(value);
+            const minDateObj = minDate ? new Date(minDate) : null;
+            const maxDateObj = maxDate ? new Date(maxDate) : null;
+
+            // Check if date is valid
+            if (isNaN(inputDate.getTime())) {
+                feedback.textContent = 'Invalid date format';
+                feedback.className = 'date-feedback invalid';
+                feedback.style.display = 'block';
+                return;
+            }
+
+            // Check minimum date
+            if (minDateObj && inputDate < minDateObj) {
+                feedback.textContent = 'Date must be today or later';
+                feedback.className = 'date-feedback invalid';
+                feedback.style.display = 'block';
+                return;
+            }
+
+            // Check maximum date
+            if (maxDateObj && inputDate > maxDateObj) {
+                feedback.textContent = 'Date cannot be more than 2 years in the future';
+                feedback.className = 'date-feedback invalid';
+                feedback.style.display = 'block';
+                return;
+            }
+
+            // Valid date
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const diffTime = inputDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) {
+                feedback.textContent = 'Due today';
+            } else if (diffDays === 1) {
+                feedback.textContent = 'Due tomorrow';
+            } else if (diffDays < 7) {
+                feedback.textContent = `Due in ${diffDays} days`;
+            } else if (diffDays < 30) {
+                const weeks = Math.floor(diffDays / 7);
+                feedback.textContent = `Due in ${weeks} week${weeks > 1 ? 's' : ''}`;
+            } else {
+                const months = Math.floor(diffDays / 30);
+                feedback.textContent = `Due in ${months} month${months > 1 ? 's' : ''}`;
+            }
+
+            feedback.className = 'date-feedback valid';
+            feedback.style.display = 'block';
+        }
+
+        // Initialize date validation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('due_date');
+            if (dateInput) {
+                // Validate on input change
+                dateInput.addEventListener('input', function() {
+                    validateDateInput(this);
+                });
+
+                // Validate on blur
+                dateInput.addEventListener('blur', function() {
+                    validateDateInput(this);
+                });
+
+                // Initial validation
+                validateDateInput(dateInput);
+            }
+        });
     </script>
 </head>
 <body>
@@ -944,6 +1134,87 @@
         @yield('content')
     </div>
 </div>
+
+{{-- Add Subtask Modal --}}
+<div id="addSubtaskModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div class="modal-content" style="background:var(--c-surface); border:1px solid var(--c-border); border-radius:12px; padding:24px; max-width:400px; width:90%; box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h3 style="margin:0; font-size:1.1rem; font-weight:600; color:var(--c-text);">Add Subtask</h3>
+            <button onclick="closeAddSubtaskModal()" style="background:none; border:none; color:var(--c-muted); cursor:pointer; font-size:1.5rem; line-height:1;">×</button>
+        </div>
+
+        <div id="subtaskTaskTitle" style="font-size:0.9rem; color:var(--c-muted); margin-bottom:16px;"></div>
+
+        <form id="addSubtaskForm" method="POST">
+            @csrf
+            <div style="margin-bottom:16px;">
+                <input
+                    type="text"
+                    name="title"
+                    id="subtaskTitle"
+                    placeholder="Enter subtask title..."
+                    style="width:100%; padding:10px 12px; background:var(--c-bg); border:1px solid var(--c-border); border-radius:6px; color:var(--c-text); font-size:0.9rem;"
+                    required
+                    maxlength="255"
+                    minlength="2"
+                >
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button type="button" onclick="closeAddSubtaskModal()" class="btn btn-secondary" style="padding:8px 16px; font-size:0.85rem;">Cancel</button>
+                <button type="submit" class="btn btn-primary" style="padding:8px 16px; font-size:0.85rem;">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:6px;">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Add Subtask
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Subtask modal functionality
+    function showAddSubtaskModal(taskId, taskTitle) {
+        const modal = document.getElementById('addSubtaskModal');
+        const form = document.getElementById('addSubtaskForm');
+        const titleDisplay = document.getElementById('subtaskTaskTitle');
+        const titleInput = document.getElementById('subtaskTitle');
+
+        // Set task title display
+        titleDisplay.textContent = `Task: ${taskTitle}`;
+
+        // Update form action
+        form.action = `/tasks/${taskId}/subtasks`;
+
+        // Clear and focus input
+        titleInput.value = '';
+        titleInput.focus();
+
+        // Show modal
+        modal.style.display = 'flex';
+    }
+
+    function closeAddSubtaskModal() {
+        const modal = document.getElementById('addSubtaskModal');
+        modal.style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('addSubtaskModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAddSubtaskModal();
+        }
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && document.getElementById('addSubtaskModal').style.display === 'flex') {
+            closeAddSubtaskModal();
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -67,6 +67,19 @@
                     </div>
                 </div>
 
+                {{-- Add Subtask Button --}}
+                @if(!$task->isCompleted())
+                    <a
+                        href="{{ route('tasks.show', $task) }}"
+                        style="width:24px; height:24px; border-radius:6px; border:none; background:var(--c-accent); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; text-decoration:none;"
+                        title="View Subtasks"
+                    >
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </a>
+                @endif
+
                 @if($task->priority)
                     <span class="badge" style="background:{{ $task->priority->color }}22; color:{{ $task->priority->color }}; white-space:nowrap;">
                         {{ $task->priority->name }}
@@ -146,8 +159,24 @@
                         @if($task->subject)
                             · <span style="color:{{ $task->subject->color }};">{{ $task->subject->name }}</span>
                         @endif
+                        @if($task->hasSubtasks())
+                            · <span style="color:var(--c-accent); font-weight:500;">{{ $task->getSubtaskCompletionText() }}</span>
+                        @endif
                     </div>
                 </div>
+
+                {{-- View Subtasks Button --}}
+                @if($task->hasSubtasks())
+                    <a
+                        href="{{ route('tasks.show', $task) }}"
+                        style="width:24px; height:24px; border-radius:6px; border:none; background:var(--c-accent); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; text-decoration:none;"
+                        title="View Subtasks"
+                    >
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </a>
+                @endif
 
                 @if($task->priority)
                     <span class="badge" style="background:{{ $task->priority->color }}22; color:{{ $task->priority->color }}; white-space:nowrap;">
@@ -189,8 +218,24 @@
                         @else
                             Due {{ $task->due_date->format('M d, Y') }}
                         @endif
+                        @if($task->hasSubtasks())
+                            · <span style="color:var(--c-accent); font-weight:500;">{{ $task->getSubtaskCompletionText() }}</span>
+                        @endif
                     </div>
                 </div>
+
+                {{-- View Subtasks Button --}}
+                @if($task->hasSubtasks())
+                    <a
+                        href="{{ route('tasks.show', $task) }}"
+                        style="width:24px; height:24px; border-radius:6px; border:none; background:var(--c-accent); color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; text-decoration:none;"
+                        title="View Subtasks"
+                    >
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                        </svg>
+                    </a>
+                @endif
 
                 <span class="badge badge-{{ str_replace('_','-',$task->status) }}">{{ $task->statusLabel() }}</span>
             </div>

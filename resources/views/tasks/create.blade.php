@@ -48,8 +48,12 @@
                         value="{{ old('due_date', now()->format('Y-m-d')) }}"
                         class="form-input {{ $errors->has('due_date') ? 'error' : '' }}"
                         min="{{ now()->format('Y-m-d') }}"
+                        max="{{ now()->addYears(2)->format('Y-m-d') }}"
+                        required
+                        id="due_date"
                     >
                     @error('due_date') <div class="error-msg">{{ $message }}</div> @enderror
+                    <div id="date-feedback" class="date-feedback" style="display: none;"></div>
                 </div>
 
                 <div>

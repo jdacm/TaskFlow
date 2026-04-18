@@ -101,4 +101,32 @@ class Task extends Model
             default       => 'Pending',
         };
     }
+
+    // Subtask helpers
+    public function getSubtaskCompletionPercentage(): float
+    {
+        $totalSubtasks = $this->subtasks()->count();
+        if ($totalSubtasks === 0) {
+            return 0;
+        }
+
+        $completedSubtasks = $this->subtasks()->where('is_completed', true)->count();
+        return round(($completedSubtasks / $totalSubtasks) * 100, 1);
+    }
+
+    public function getSubtaskCompletionText(): string
+    {
+        $totalSubtasks = $this->subtasks()->count();
+        if ($totalSubtasks === 0) {
+            return '';
+        }
+
+        $completedSubtasks = $this->subtasks()->where('is_completed', true)->count();
+        return "{$completedSubtasks}/{$totalSubtasks}";
+    }
+
+    public function hasSubtasks(): bool
+    {
+        return $this->subtasks()->count() > 0;
+    }
 }

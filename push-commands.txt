@@ -1,0 +1,22 @@
+# Commands to push TaskFlow to GitHub
+
+# 1. Ensure all changes are committed (already done)
+# git add .
+# git commit -m "Your commit message"
+
+# 2. Push to the main branch
+# Note: You may need to authenticate with GitHub (username/password or token)
+git push origin main
+
+# If authentication fails, you might need to:
+# - Use a Personal Access Token instead of password
+# - Configure SSH keys
+# - Or push via GitHub Desktop
+
+# Note: The setup-files folder is gitignored and won't be pushed.
+# If you need to share setup files, upload them separately or use a different method.
+
+# Optional: If you want to create a new repository or change remote
+# git remote add origin https://github.com/yourusername/yourrepo.git
+# git branch -M main
+# git push -u origin main

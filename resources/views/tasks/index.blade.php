@@ -54,6 +54,7 @@
                 <th>Priority</th>
                 <th>Due Date</th>
                 <th>Status</th>
+                <th>Subtasks</th>
                 <th style="width:120px;">Actions</th>
             </tr>
         </thead>
@@ -130,9 +131,33 @@
                         </span>
                     </td>
 
+                    {{-- Subtasks --}}
+                    <td>
+                        @if($task->hasSubtasks())
+                            <span style="font-size:0.8rem; color:var(--c-accent); font-weight:500;">
+                                {{ $task->getSubtaskCompletionText() }}
+                            </span>
+                        @else
+                            <span style="color:var(--c-muted); font-size:0.8rem;">—</span>
+                        @endif
+                    </td>
+
                     {{-- Actions --}}
                     <td>
-                        <div style="display:flex; gap:6px;">
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            @if($task->hasSubtasks())
+                                <a
+                                    href="{{ route('tasks.show', $task) }}"
+                                    class="btn btn-secondary btn-sm"
+                                    title="View Subtasks"
+                                    style="padding:4px 8px; font-size:0.75rem; text-decoration:none;"
+                                >
+                                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:4px;">
+                                        <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                    </svg>
+                                    View Subtasks
+                                </a>
+                            @endif
                             <a href="{{ route('tasks.edit', $task) }}" class="btn btn-secondary btn-sm">Edit</a>
                             <form method="POST" action="{{ route('tasks.destroy', $task) }}" onsubmit="return confirm('Delete this task?')">
                                 @csrf @method('DELETE')
